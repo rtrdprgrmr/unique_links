@@ -17,7 +17,7 @@ make_hash(){
 	else
 		ext=.$tail
 	fi
-	hash=$(dd if="$file" bs=4096 count=1 2>/dev/null | openssl md5)
+	hash=$(dd if="$file" bs=4096 count=1 2>/dev/null | openssl md5 | cut -c 1-8)
 }
 
 make_link(){
