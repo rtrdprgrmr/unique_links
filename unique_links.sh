@@ -87,7 +87,7 @@ del_action(){
 
 check_action(){
 	if [ -d "$file" ]; then
-		find "$file" -type f -print0 | xargs -0 "$0" -check
+		find "$file" -type l -print0 | xargs -0 "$0" -check
 		if [ $? -ne 0 ]; then
 			exit 255
 		fi
