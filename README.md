@@ -11,7 +11,7 @@ unique_links.sh -del destination-directory source-file-or-directory ...
 
 "unique_links.sh -add" creates symbolic links to the specifiled files except for entirely duplicate files.
 
-For example, following command creates symbolic links under 'output' directory to plain files under ~/Backups/*/Pictures. Created symbolic links are named from the hash code of file contents. If there are entirely duplicate files under ~/Backups/*/Pictures, the corresponding symbolic link is created only once.
+For example, following command creates symbolic links under 'output' directory to plain files under ~/Backups/\*/Pictures. Created symbolic links are named from the hash code of file contents. If there are entirely duplicate files under ~/Backups/\*/Pictures, the corresponding symbolic link is created only once.
 
 ```sh
 % mkdir output
