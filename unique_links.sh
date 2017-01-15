@@ -17,7 +17,7 @@ make_hash(){
 	else
 		ext=.$tail
 	fi
-	hash=$(dd if="$file" bs=4096 count=1 2>/dev/null | openssl md5 | cut -c 1-8)
+	hash=$(dd if="$file" bs=8192 count=1 2>/dev/null | openssl md5 | cut -c 1-8)
 }
 
 make_link(){
@@ -78,7 +78,7 @@ del_action(){
 	for i in "$dstdir/$hash"*; do
 		cmp --quiet "$file" "$i"
 		if [ $? -eq 0 ]; then
-			[ $VERBOSE ] && echo "del: $file ($i)"
+			[ $VERBOSE ] && echo "del: $i ($file)"
 			rm -f "$i"
 			return
 		fi
