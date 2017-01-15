@@ -42,22 +42,20 @@ add_action(){
 		return
 	fi
 	make_hash
-	for i in "$dstdir/$hash"*; do
-		cmp --quiet "$file" "$i"
-		if [ $? -eq 0 ]; then
-			[ $VERBOSE ] && echo "dup: $file ($i)"
-			return
-		fi
-	done
-	newfile=$dstdir/$hash$ext
-	let j=1
+	let j=0
+	symlnk=$dstdir/$hash$ext
 	while true; do
-		if [ ! -e "$newfile" ] && [ ! -L "$newfile" ]; then
-			make_link "$file" "$newfile"
+		if [ ! -e "$symlnk" ] && [ ! -L "$symlnk" ]; then
+			make_link "$file" "$symlnk"
 			return
 		fi
-		newfile=$dstdir/${hash}_$j$ext
+		cmp --quiet "$file" "$symlnk"
+		if [ $? -eq 0 ]; then
+			[ $VERBOSE ] && echo "dup: $file ($symlnk)"
+			return
+		fi
 		let j=j+1
+		symlnk=$dstdir/${hash}_$j$ext
 	done
 }
 
@@ -75,13 +73,27 @@ del_action(){
 		return
 	fi
 	make_hash
-	for i in "$dstdir/$hash"*; do
-		cmp --quiet "$file" "$i"
-		if [ $? -eq 0 ]; then
-			[ $VERBOSE ] && echo "del: $i ($file)"
-			rm -f "$i"
+	let j=0
+	symlnk=$dstdir/$hash$ext
+	rmlnk=
+	while true; do
+		if [ ! -e "$symlnk" ] && [ ! -L "$symlnk" ]; then
+			if [ "$rmlnk" ] && [ "$rmlnk" != "$prevlnk" ]; then
+				mv "$prevlnk" "$rmlnk"
+			fi
 			return
 		fi
+		if [ -z "$rmlnk" ]; then
+			cmp --quiet "$file" "$symlnk"
+			if [ $? -eq 0 ]; then
+				rmlnk=$symlnk
+				[ $VERBOSE ] && echo "del: $rmlnk ($file)"
+				rm -f "$rmlnk"
+			fi
+		fi
+		prevlnk=$symlnk
+		let j=j+1
+		symlnk=$dstdir/${hash}_$j$ext
 	done
 }
 
